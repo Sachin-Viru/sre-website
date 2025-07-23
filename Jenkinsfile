@@ -13,6 +13,13 @@ pipeline{
                 checkout scm
             }
         }
+        stage("SonarQube Quality Analysys"){
+            steps{
+                withSonarQubeEnv("Sonar"){
+                    sh "$SONAR_HOME/bin/sonar-scanner -Dsonar.projectName=sre-website -Dsonar.projectKey=sre-website"
+                }
+            }
+        }
 
     }   
 }
