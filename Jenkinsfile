@@ -33,7 +33,7 @@ pipeline{
                 }
             }
         }
-        stages("Build A Jar file for SRE-website"){
+        stage("Build A Jar file for SRE-website"){
             steps{
                 sh "mvn clean pakage -DskipTests"
             }
