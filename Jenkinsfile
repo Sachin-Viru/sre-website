@@ -46,6 +46,13 @@ pipeline{
                 sh "docker build -t sre-website:latest ."
             }
         }
+        stage("Trivy File System Scan"){
+            steps{
+                sh '''
+                docker run --rm -v $(pwd):/src aquasec/trivy fs --format table -o /src/trivy-fs-report.txt /src
+                '''
+            }
+        }
 
     }   
 }
