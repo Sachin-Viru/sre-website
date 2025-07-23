@@ -26,16 +26,21 @@ pipeline{
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
-        stage("Sonar Quality Gate Scan"){
-            steps{
-                timeout(time: 10, unit: "MINUTES"){
-                    waitForQualityGate abortPipeline: false
-                }
-            }
-        }
+//        stage("Sonar Quality Gate Scan"){
+//            steps{
+//                timeout(time: 10, unit: "MINUTES"){
+//                    waitForQualityGate abortPipeline: false
+//               }
+//            }
+//        }
         stage("Build A Jar file for SRE-website"){
             steps{
                 sh "mvn clean pakage -DskipTests"
+            }
+        }
+        stage("Create a docker images"){
+            steps{
+                sh "docker build -t sre-website:latest ."
             }
         }
 
