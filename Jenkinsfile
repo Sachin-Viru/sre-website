@@ -9,7 +9,7 @@ pipeline{
     stages{
         stage("Checkout code"){
             steps{
-                echo "📥 Cloning source code from GitHub"
+                echo "Cloning source code from GitHub"
                 checkout scm
             }
         }
@@ -21,7 +21,7 @@ pipeline{
             }
         }
         stage("OWASP Dependency check"){
-            step{
+            steps{
                 dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dc'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
