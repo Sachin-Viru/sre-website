@@ -6,7 +6,7 @@ pipeline{
         IMAGE_TAG = "latest"
     }
 
-    satges{
+    stages{
         stage("Checkout code"){
             steps{
                 echo "📥 Cloning source code from GitHub"
@@ -16,3 +16,4 @@ pipeline{
 
     }   
 }
+
