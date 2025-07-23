@@ -1,5 +1,8 @@
 pipeline{
     agent any
+    tools{
+        maven Maven3
+    }
     environment{
         SONAR_HOME = tool "Sonar"
         DOCKER_IMAGE = "sachinviru/sre-website"   
