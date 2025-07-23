@@ -35,7 +35,6 @@ pipeline{
         }
         stages("Build A Jar file for SRE-website"){
             steps{
-                echo "building jar file using maven"
                 sh "mvn clean pakage -DskipTests"
             }
         }
