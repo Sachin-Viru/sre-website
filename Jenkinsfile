@@ -38,7 +38,7 @@ pipeline{
 //        }
         stage("Build A Jar file for SRE-website"){
             steps{
-                sh "mvn clean pakage -DskipTests"
+                sh "mvn clean package -DskipTests"
             }
         }
         stage("Create a docker images"){
