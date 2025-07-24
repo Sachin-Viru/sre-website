@@ -70,7 +70,7 @@ pipeline{
             steps{
                 sh '''
                 docker rm -f sre_website || true
-                docker run -itd --name sre_website -p 2020:2020 $DOCKER_IMAGE:$IMAGE_TAG
+                docker run -itd --name sre_website -p 2020:2020 --network monitoring $DOCKER_IMAGE:$IMAGE_TAG
                 '''
             }
         }
