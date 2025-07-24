@@ -1,118 +1,72 @@
-pipeline {
+pipeline{
     agent any
-    tools {
+    tools{
         maven 'Maven3'
     }
-    environment {
+    environment{
         SONAR_HOME = tool "Sonar"
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub')
         DOCKER_IMAGE = "sachinviru/sre-website"   
         IMAGE_TAG = "latest"
     }
 
-    stages {
-        stage("Checkout code") {
-            steps {
+    stages{
+        stage("Checkout code"){
+            steps{
                 echo "Cloning source code from GitHub"
                 checkout scm
             }
         }
-
-        stage("Build with Tests") {
-            steps {
-                sh "mvn clean package"  // Run tests and build before analysis
+        stage("Build with Tests"){
+            steps{
+                sh "mvn clean package"
             }
         }
-
-        stage("SonarQube Quality Analysis") {
-            steps {
-                withSonarQubeEnv("Sonar") {
-                    // Using both Maven and sonar-scanner for compatibility
+        stage("SonarQube Quality Analysis"){
+            steps{
+                withSonarQubeEnv("Sonar"){
                     sh """
-                    mvn sonar:sonar \
-                      -Dsonar.projectName=sre-website \
-                      -Dsonar.projectKey=sre-website \
-                      -Dsonar.java.binaries=target/classes \
-                      -Dsonar.sources=src/main/java \
-                      -Dsonar.sourceEncoding=UTF-8
-                    
-                    $SONAR_HOME/bin/sonar-scanner \
-                      -Dsonar.projectName=sre-website \
-                      -Dsonar.projectKey=sre-website \
-                      -Dsonar.java.binaries=target/classes \
-                      -Dsonar.sources=src/main/java \
-                      -Dsonar.sourceEncoding=UTF-8
+                    mvn sonar:sonar -Dsonar.projectName=sre-website -Dsonar.projectKey=sre-website -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java
+                    $SONAR_HOME/bin/sonar-scanner -Dsonar.projectName=sre-website -Dsonar.projectKey=sre-website -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java
                     """
                 }
             }
         }
-
-        stage("OWASP Dependency check") {
-            steps {
+        stage("OWASP Dependency check"){
+            steps{
                 dependencyCheck additionalArguments: '--scan ./ --format XML --out ./', odcInstallation: 'dc'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
-
-        stage("Create Docker Image") {
-            steps {
-                script {
+        stage("Create Docker Image"){
+            steps{
+                script{
                     dockerImage = docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}") 
                 }
             }
         }
-
-        stage("Trivy Security Scan") {
-            steps {
-                sh '''
-                docker run --rm \
-                  -v /var/run/docker.sock:/var/run/docker.sock \
-                  aquasec/trivy:latest \
-                  image --severity HIGH,CRITICAL \
-                  ${DOCKER_IMAGE}:${IMAGE_TAG} > trivy-scan.txt
-                cat trivy-scan.txt
-                '''
+        stage("Trivy Security Scan"){
+            steps{
+                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL ${DOCKER_IMAGE}:${IMAGE_TAG} > trivy-scan.txt'
             }
         }
-
-        stage("Docker login and Push") {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub', 
-                    usernameVariable: 'DOCKER_USER', 
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
-                    '''
+        stage("Docker login and Push"){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]){
+                    sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin && docker push ${DOCKER_IMAGE}:${IMAGE_TAG}'
                 }
             }
         }
-
-        stage("Run docker image locally") {
-            steps {
-                sh '''
-                docker rm -f sre_website || true
-                docker run -d \
-                  --name sre_website \
-                  -p 2020:2020 \
-                  --network monitoring \
-                  ${DOCKER_IMAGE}:${IMAGE_TAG}
-                '''
+        stage("Run docker image locally"){
+            steps{
+                sh 'docker rm -f sre_website || true && docker run -d --name sre_website -p 2020:2020 --network monitoring ${DOCKER_IMAGE}:${IMAGE_TAG}'
             }
         }
     }
-
-    post {
-        always {
+    post{
+        always{
             cleanWs()
-            script {
-                // Archive important reports
-                archiveArtifacts artifacts: '**/target/surefire-reports/*.xml', allowEmptyArchive: true
-                archiveArtifacts artifacts: '**/dependency-check-report.xml', allowEmptyArchive: true
-                archiveArtifacts artifacts: 'trivy-scan.txt', allowEmptyArchive: true
-            }
+            archiveArtifacts artifacts: '**/target/surefire-reports/*.xml,**/dependency-check-report.xml,trivy-scan.txt', allowEmptyArchive: true
         }
-    }
+    }   
 }
