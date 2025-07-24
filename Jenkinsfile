@@ -44,7 +44,9 @@ pipeline{
         }
         stage("Create a docker images"){
             steps{
-                sh "docker build -t sre-website:latest ."
+                script{
+                    docker-image = docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
+                }
             }
         }
         stage("Trivy File System Scan"){
@@ -58,7 +60,7 @@ pipeline{
             steps{
                 script{
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub'){
-                       dockerImage.push()
+                       docker-image.push('latest')
                     }
                 }
             }
