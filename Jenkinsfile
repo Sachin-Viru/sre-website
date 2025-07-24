@@ -2,7 +2,6 @@ pipeline {
     agent any
     tools {
         maven 'Maven3'
-        jdk 'jdk17'  // Add JDK configuration
     }
     environment {
         SONAR_HOME = tool "Sonar"
