@@ -45,7 +45,7 @@ pipeline{
         stage("Create a docker images"){
             steps{
                 script{
-                    docker-image = docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
+                    docker-image = docker build -t ("${DOCKER_IMAGE}:${IMAGE_TAG}") .
                 }
             }
         }
