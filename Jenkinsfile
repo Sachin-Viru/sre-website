@@ -56,11 +56,11 @@ pipeline{
                 '''
             }
         }
-        stage("Docker login"){
+        stage("Docker login and Push"){
             steps{
                 script{
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub'){
-                       docker-image.push('latest')
+                       docker-image.push("${IMAGE_TAG}")
                     }
                 }
             }
