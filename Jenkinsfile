@@ -5,7 +5,7 @@ pipeline{
     }
     environment{
         SONAR_HOME = tool "Sonar"
-        DOCKER_HUB_CREDENTIALS = 'docker-hub'
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub')
         DOCKER_IMAGE = "sachinviru/sre-website"   
         IMAGE_TAG = "latest"
     }
