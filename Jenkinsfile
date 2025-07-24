@@ -58,16 +58,18 @@ pipeline{
         }
         stage("Docker login and Push"){
             steps{
-                script{
-                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub'){
-                       dockerImage.push("${IMAGE_TAG}")
-                    }
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]){
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
+                    '''
                 }
             }
         }
         stage("Run docker image locally"){
             steps{
                 sh '''
+                docker rm -f sre_website || true
                 docker run -itd --name sre_website -p 2020:2020 $DOCKER_IMAGE:$IMAGE_TAG
                 '''
             }
