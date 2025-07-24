@@ -45,7 +45,7 @@ pipeline{
         stage("Create a docker images"){
             steps{
                 script{
-                    docker-image = docker build -t ("${DOCKER_IMAGE}:${IMAGE_TAG}") .
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}") 
                 }
             }
         }
@@ -60,7 +60,7 @@ pipeline{
             steps{
                 script{
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub'){
-                       docker-image.push("${IMAGE_TAG}")
+                       dockerImage.push("${IMAGE_TAG}")
                     }
                 }
             }
