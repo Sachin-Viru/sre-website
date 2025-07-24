@@ -5,8 +5,9 @@ pipeline{
     }
     environment{
         SONAR_HOME = tool "Sonar"
-        DOCKER_HUB_CREDENTIALS = 'docker-hub'
-        DOCKER_IMAGE = "sachinviru/sre-website"   
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub')
+        DOCKER_HUB_USERNAME = "$DOCKER_HUB_CREDENTIALS_USR"
+        DOCKER_IMAGE = "sre-website"   
         IMAGE_TAG = "latest"
     }
 
@@ -58,7 +59,7 @@ pipeline{
             steps{
                 script{
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub'){
-                       image.push()
+                       dockerImage.push()
                     }
                 }
             }
