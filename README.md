@@ -1,64 +1,76 @@
 
-# Jenkins CI/CD Pipeline for SRE Website
+# SRE Website Jenkins CI/CD Pipeline
 
-This project demonstrates a complete CI/CD pipeline setup for an SRE-themed website using Jenkins, Docker, Trivy, SonarQube, and monitoring tools like Prometheus + Grafana.
+This README provides detailed documentation of a complete Jenkins CI/CD pipeline setup for the **SRE Tools & Technologies Website**. The pipeline includes SonarQube analysis, OWASP dependency check, Docker image build and push, Trivy security scan, and monitoring integration with Prometheus and Grafana.
 
 ---
 
 ## 🔧 Prerequisites
 
-- Jenkins installed on your system (e.g., Ubuntu)
-- Docker installed and configured (`jenkins` user added to `docker` group)
-- Java, Maven, Git installed
-- Public GitHub repo for pipeline triggering via webhook
-
----
-
-## 🧩 Step-by-Step Jenkins Configuration
-
-### 1. 🔌 Install Required Jenkins Plugins
-
-Install the following plugins from `Manage Jenkins → Plugins`:
-- **Git**
-- **Pipeline**
-- **Docker Pipeline**
-- **OWASP Dependency-Check Plugin**
-- **SonarQube Scanner for Jenkins**
-- **Credentials Binding Plugin**
-- **Trivy Scanner Plugin** (if available)
-
-### 2. ⚙️ Maven Setup in Jenkins
-Go to `Manage Jenkins → Global Tool Configuration → Maven`
-- Add `Maven3` with correct installation path
-
-### 3. 📦 SonarQube Configuration
-- Install SonarQube locally or use public instance
-- In Jenkins → `Manage Jenkins → Configure System`
-  - Scroll to **SonarQube servers**
-  - Add instance name (e.g., `Sonar`) and token
-- Add webhook in your SonarQube project:  
-  `http://<jenkins-url>/sonarqube-webhook/`
-
-### 4. 🛡️ OWASP Dependency-Check Configuration
-- Install `dependency-check` on Jenkins server
-- In Jenkins → `Global Tool Configuration → Dependency-Check installations`, name it `dc`
-
-### 5. 🐳 Docker Setup
-- Add Jenkins user to docker group:
+- Jenkins installed (on laptop or VM)
+- Docker installed and Jenkins user added to Docker group:
   ```bash
   sudo usermod -aG docker jenkins
-  sudo systemctl restart docker
   ```
-- Create Docker Hub credentials in Jenkins:
-  - `Manage Jenkins → Credentials → Global`
-  - Add Username/Password with ID: `docker-hub`
+  Restart Jenkins or reboot system for changes to apply.
 
-### 6. 🛠️ Trivy
-You don’t need to install Trivy on Jenkins host. It is pulled inside the pipeline from DockerHub.
+- Maven installed and configured in Jenkins (`Maven3` label)
+- Prometheus, Grafana, Node Exporter running as Docker containers on the same custom Docker network (`monitoring`)
+- Docker network created for monitoring:
+  ```bash
+  docker network create monitoring
+  ```
 
 ---
 
-## 🧪 Jenkins Pipeline (Groovy)
+## 🐳 Run Required Docker Containers
+
+### SonarQube (in Docker)
+```bash
+docker run -d --name sonarqube --network monitoring -p 9000:9000 sonarqube:lts
+```
+- Access: http://localhost:9000
+- Generate a SonarQube token from your user account and save it in Jenkins credentials (secret text) with ID `sonar-token`
+- Create SonarQube server config in Jenkins: Manage Jenkins → Configure System → SonarQube servers
+
+### Trivy (used as container, no install needed)
+Trivy is run inside a container during the pipeline:
+```bash
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image <image-name>
+```
+
+---
+
+## 🚫 Important Note
+
+> If Jenkins is installed **locally** and not exposed publicly, **GitHub webhooks will NOT work**. You must trigger builds manually or use GitHub polling.
+
+---
+
+## ⚙️ Jenkins Plugin Requirements
+
+Install the following Jenkins plugins:
+
+- **Pipeline** (`workflow-aggregator`)
+- **Docker Pipeline**
+- **OWASP Dependency-Check Plugin**
+- **SonarQube Scanner**
+- **Trivy Scanner Plugin** (optional)
+- **Credentials Binding Plugin**
+- **Maven Integration Plugin**
+
+---
+
+## 🔐 Credentials Required in Jenkins
+
+| ID             | Type           | Usage                        |
+|----------------|----------------|------------------------------|
+| `docker-hub`   | Username/Password | For DockerHub login/push     |
+| `sonar-token`  | Secret text     | SonarQube authentication     |
+
+---
+
+## 🧪 Pipeline Overview
 
 ```groovy
 pipeline {
@@ -68,59 +80,69 @@ pipeline {
     }
     environment {
         SONAR_HOME = tool "Sonar"
-        DOCKER_IMAGE = "sre-website"
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub')
+        DOCKER_IMAGE = "sachinviru/sre-website"
         IMAGE_TAG = "latest"
     }
+
     stages {
         stage("Checkout code") {
             steps {
+                echo "Cloning source code from GitHub"
                 checkout scm
+            }
+        }
+        stage("Build with Tests") {
+            steps {
+                sh "mvn clean package"
             }
         }
         stage("SonarQube Quality Analysis") {
             steps {
                 withSonarQubeEnv("Sonar") {
-                    sh "${SONAR_HOME}/bin/sonar-scanner -Dsonar.projectName=sre-website -Dsonar.projectKey=sre-website"
-                }
-            }
-        }
-        stage("OWASP Dependency Check") {
-            steps {
-                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dc'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
-        }
-        stage("Build JAR") {
-            steps {
-                sh "mvn clean package -DskipTests"
-            }
-        }
-        stage("Build Docker Image") {
-            steps {
-                sh "docker build -t ${DOCKER_IMAGE}:${IMAGE_TAG} ."
-            }
-        }
-        stage("Trivy FS Scan") {
-            steps {
-                sh '''
-                docker run --rm -v $(pwd):/src aquasec/trivy fs --format table -o /src/trivy-fs-report.txt /src
-                '''
-            }
-        }
-        stage("Docker Login and Push") {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
+                    mvn sonar:sonar -Dsonar.projectName=sre-website -Dsonar.projectKey=sre-website -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java
+                    $SONAR_HOME/bin/sonar-scanner -Dsonar.projectName=sre-website -Dsonar.projectKey=sre-website -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java
                     '''
                 }
             }
         }
-        stage("Run Docker Image Locally") {
+        stage("OWASP Dependency check") {
             steps {
-                sh "docker run -d --name sre_website --network monitoring -p 2020:2020 ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                dependencyCheck additionalArguments: '--scan ./ --format XML --out ./', odcInstallation: 'dc'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
+        }
+        stage("Create Docker Image") {
+            steps {
+                script {
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
+                }
+            }
+        }
+        stage("Trivy Security Scan") {
+            steps {
+                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL ${DOCKER_IMAGE}:${IMAGE_TAG} > trivy-scan.txt'
+            }
+        }
+        stage("Docker login and Push") {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin && docker push ${DOCKER_IMAGE}:${IMAGE_TAG}'
+                }
+            }
+        }
+        stage("Run docker image locally") {
+            steps {
+                sh 'docker rm -f sre_website || true && docker run -d --name sre_website -p 2020:2020 --network monitoring ${DOCKER_IMAGE}:${IMAGE_TAG}'
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+            archiveArtifacts artifacts: '**/target/surefire-reports/*.xml,**/dependency-check-report.xml,trivy-scan.txt', allowEmptyArchive: true
         }
     }
 }
@@ -128,66 +150,30 @@ pipeline {
 
 ---
 
-## 📊 Monitoring Setup
+## 📊 Monitoring Setup (Prometheus + Grafana)
 
-1. **Create a Docker network**
-```bash
-docker network create monitoring
+1. You already have Prometheus, Node Exporter, and Grafana running in containers.
+2. Add your running SRE container (`sre_website`) to the same Docker network `monitoring`.
+3. Add the following target in `prometheus.yml`:
+```yaml
+  - job_name: 'sre-website'
+    static_configs:
+      - targets: ['sre_website:2020']
 ```
-
-2. **Run Node Exporter**
-```bash
-docker run -d --name node-exporter --network monitoring prom/node-exporter
-```
-
-3. **Run Prometheus**
-```bash
-docker run -d --name prometheus --network monitoring -p 9090:9090 -v $PWD/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
-```
-
-4. **Run Grafana**
-```bash
-docker run -d --name grafana --network monitoring -p 3000:3000 grafana/grafana
-```
-
-5. **Run your SRE app container in same network**
-```bash
-docker run -d --name sre_website --network monitoring -p 2020:2020 sre-website:latest
-```
+4. Restart Prometheus container.
 
 ---
 
-## 🛠️ Tools & Technologies Used
+## ✅ SRE Tooling Covered
 
-### CI/CD
-- Jenkins
-- GitHub Actions
-
-### Monitoring
-- Prometheus
-- Grafana
-
-### Security
-- Trivy
-- Snyk
-- OWASP Dependency Check
-
-### Logging
-- ELK Stack
-- Loki
-
-### Infrastructure as Code
-- Terraform
-- Ansible
+| Category        | Tools                            |
+|----------------|----------------------------------|
+| CI/CD          | Jenkins, GitHub Actions          |
+| Monitoring     | Prometheus, Grafana, Node Exporter |
+| Security       | Trivy, Snyk                      |
+| Logging        | ELK Stack, Loki                  |
+| IaC            | Terraform, Ansible               |
 
 ---
 
-## 📘 Notes
-
-- Set up GitHub webhook to Jenkins for auto-triggering on push events
-- Use Jenkins shared libraries and parameterized builds for more flexibility
-- Export Trivy, OWASP, and Sonar reports as part of build artifacts
-
----
-
-Made with ❤️ by SRE Team.
+Happy SRE Engineering 🚀
