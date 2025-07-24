@@ -5,6 +5,7 @@ pipeline{
     }
     environment{
         SONAR_HOME = tool "Sonar"
+        DOCKER_HUB_CREDENTIALS = 'docker-hub'
         DOCKER_IMAGE = "sachinviru/sre-website"   
         IMAGE_TAG = "latest"
     }
@@ -51,6 +52,13 @@ pipeline{
                 sh '''
                 docker run --rm -v $(pwd):/src aquasec/trivy fs --format table -o /src/trivy-fs-report.txt /src
                 '''
+            }
+        }
+        stage("Docker login"){
+            steps{
+                scripts{
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub')
+                }
             }
         }
 
