@@ -17,6 +17,11 @@ pipeline{
                 checkout scm
             }
         }
+        stage("Build with Tests"){
+            steps{
+                sh "mvn clean package"
+            }
+        }
         stage("SonarQube Quality Analysys"){
             steps{
                 withSonarQubeEnv("Sonar"){
