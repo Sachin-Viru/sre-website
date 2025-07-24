@@ -65,6 +65,11 @@ pipeline{
                 }
             }
         }
+        stage("Run docker image locally"){
+            steps{
+                sh docker run -itd --name sre_website -p 2020:2020 DOCKER_IMAGE:IMAGE_TAG
+            }
+        }
 
     }   
 }
