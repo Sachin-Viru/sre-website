@@ -1,103 +1,191 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SRE Tools & Technologies</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRE Learning Path</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .tech-card {
+            transition: transform 0.3s;
+        }
+        .tech-card:hover {
+            transform: scale(1.05);
+        }
+        .category-header {
+            background-color: #f8f9fa;
+            border-left: 5px solid #0d6efd;
+        }
+        .logo-svg {
+            height: 80px;
+            margin-bottom: 15px;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16" class="d-inline-block align-top me-2">
+                    <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                </svg>
+                SRE Learning Path
+            </a>
+        </div>
+    </nav>
 
-  <header class="bg-blue-900 text-white p-6 text-center shadow-lg">
-    <h1 class="text-3xl font-bold">🔧 SRE Tools & Technologies</h1>
-    <p class="mt-2 text-lg">Key tools used by modern Site Reliability Engineers</p>
-  </header>
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4">Site Reliability Engineering Learning Path</h1>
+            <p class="lead">Essential tools and technologies to master for becoming an SRE</p>
+        </div>
 
-  <main class="max-w-6xl mx-auto p-6 space-y-10">
+        <!-- Monitoring & Observability -->
+        <div class="card mb-4 category-header">
+            <div class="card-body">
+                <h2><i class="bi bi-graph-up"></i> Monitoring & Observability</h2>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+            <div class="col" th:each="tool : ${monitoringTools}">
+                <div class="card h-100 tech-card">
+                    <div class="card-body text-center">
+                        <div class="logo-container" th:utext="${tool.logo}"></div>
+                        <h5 class="card-title" th:text="${tool.name}"></h5>
+                        <p class="card-text" th:text="${tool.description}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- CI/CD -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">🚀 CI/CD</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://www.jenkins.io/images/logos/jenkins/jenkins.png" class="h-16 mx-auto mb-2" alt="Jenkins">
-          <p>Jenkins</p>
+        <!-- Infrastructure as Code -->
+        <div class="card mb-4 category-header">
+            <div class="card-body">
+                <h2><i class="bi bi-code-square"></i> Infrastructure as Code</h2>
+            </div>
         </div>
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="h-16 mx-auto mb-2" alt="GitHub Actions">
-          <p>GitHub Actions</p>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+            <div class="col" th:each="tool : ${iacTools}">
+                <div class="card h-100 tech-card">
+                    <div class="card-body text-center">
+                        <div class="logo-container" th:utext="${tool.logo}"></div>
+                        <h5 class="card-title" th:text="${tool.name}"></h5>
+                        <p class="card-text" th:text="${tool.description}"></p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Monitoring -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">📊 Monitoring</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://prometheus.io/assets/prometheus_logo_grey.svg" class="h-16 mx-auto mb-2" alt="Prometheus">
-          <p>Prometheus</p>
+        <!-- Containerization & Orchestration -->
+        <div class="card mb-4 category-header">
+            <div class="card-body">
+                <h2><i class="bi bi-box-seam"></i> Containerization & Orchestration</h2>
+            </div>
         </div>
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://grafana.com/static/img/menu/grafana2.svg" class="h-16 mx-auto mb-2" alt="Grafana">
-          <p>Grafana</p>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+            <div class="col" th:each="tool : ${containerTools}">
+                <div class="card h-100 tech-card">
+                    <div class="card-body text-center">
+                        <div class="logo-container" th:utext="${tool.logo}"></div>
+                        <h5 class="card-title" th:text="${tool.name}"></h5>
+                        <p class="card-text" th:text="${tool.description}"></p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://raw.githubusercontent.com/google/cadvisor/master/docs/images/cadvisor-logo.png" class="h-16 mx-auto mb-2" alt="cAdvisor">
-          <p>cAdvisor</p>
-        </div>
-      </div>
-    </section>
 
-    <!-- Security -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">🔐 Security</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://raw.githubusercontent.com/aquasecurity/trivy/main/docs/static/images/logo.svg" class="h-16 mx-auto mb-2" alt="Trivy">
-          <p>Trivy</p>
+        <!-- CI/CD -->
+        <div class="card mb-4 category-header">
+            <div class="card-body">
+                <h2><i class="bi bi-arrow-repeat"></i> Continuous Integration & Deployment</h2>
+            </div>
         </div>
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://snyk.io/wp-content/uploads/logo-2.svg" class="h-16 mx-auto mb-2" alt="Snyk">
-          <p>Snyk</p>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+            <div class="col" th:each="tool : ${ciCdTools}">
+                <div class="card h-100 tech-card">
+                    <div class="card-body text-center">
+                        <div class="logo-container" th:utext="${tool.logo}"></div>
+                        <h5 class="card-title" th:text="${tool.name}"></h5>
+                        <p class="card-text" th:text="${tool.description}"></p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Logging -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">🪵 Logging</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Elastic_Logo.svg/512px-Elastic_Logo.svg.png" class="h-16 mx-auto mb-2" alt="ELK">
-          <p>ELK Stack</p>
+        <!-- Cloud Platforms -->
+        <div class="card mb-4 category-header">
+            <div class="card-body">
+                <h2><i class="bi bi-cloud"></i> Cloud Platforms</h2>
+            </div>
         </div>
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://grafana.com/static/img/logos/loki-icon.svg" class="h-16 mx-auto mb-2" alt="Loki">
-          <p>Loki</p>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+            <div class="col" th:each="tool : ${cloudPlatforms}">
+                <div class="card h-100 tech-card">
+                    <div class="card-body text-center">
+                        <div class="logo-container" th:utext="${tool.logo}"></div>
+                        <h5 class="card-title" th:text="${tool.name}"></h5>
+                        <p class="card-text" th:text="${tool.description}"></p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Infra as Code -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">⚙️ Infrastructure as Code</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://www.terraform.io/assets/images/og-image-8b3e4f7d.png" class="h-16 mx-auto mb-2" alt="Terraform">
-          <p>Terraform</p>
+        <!-- Core Concepts -->
+        <div class="card mb-4 bg-light">
+            <div class="card-body">
+                <h2 class="text-center">Core SRE Concepts</h2>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Service Level Indicators (SLIs)</h5>
+                                <p class="card-text">Quantifiable measures of service behavior that are relevant to users.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Service Level Objectives (SLOs)</h5>
+                                <p class="card-text">Target values for SLIs that define acceptable service levels.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Error Budgets</h5>
+                                <p class="card-text">The amount of unreliability a service can tolerate over a period.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Toil Reduction</h5>
+                                <p class="card-text">Eliminating repetitive, manual operational work through automation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="bg-white p-4 rounded-xl shadow text-center">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Ansible_logo.svg" class="h-16 mx-auto mb-2" alt="Ansible">
-          <p>Ansible</p>
+    </div>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>© 2023 SRE Learning Path | Created with Spring Boot</p>
         </div>
-      </div>
-    </section>
+    </footer>
 
-  </main>
-
-  <footer class="text-center p-4 bg-gray-200 mt-10">
-    Built with ❤️ for SREs
-  </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 </body>
 </html>
