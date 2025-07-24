@@ -1,128 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SRE Tools & Tech</title>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
-  <style>
-    body {
-      background-color: #f5f7fa;
-      font-family: Arial, sans-serif;
-    }
-    .logo {
-      height: 60px;
-      object-fit: contain;
-      margin: 0 10px;
-    }
-    .card {
-      border-radius: 15px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-      transition: transform 0.2s ease;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-    }
-    .section-title {
-      font-weight: bold;
-      margin-bottom: 10px;
-      font-size: 1.2rem;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SRE Tools & Technologies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="container py-5">
-    <h1 class="text-center mb-4">🔧 SRE Tools & Technologies</h1>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-      <!-- CI/CD -->
-      <div class="col">
-        <div class="card text-center p-4">
-          <div class="section-title">CI/CD</div>
-          <img
-            src="https://img.icons8.com/color/100/000000/jenkins.png"
-            class="logo"
-            alt="Jenkins"
-          />
-          <img
-            src="https://img.icons8.com/fluency/96/github-actions.png"
-            class="logo"
-            alt="GitHub Actions"
-          />
-        </div>
-      </div>
+<body class="bg-gray-100 text-gray-800">
 
-      <!-- Monitoring -->
-      <div class="col">
-        <div class="card text-center p-4">
-          <div class="section-title">Monitoring</div>
-          <img
-            src="https://img.icons8.com/color/100/000000/prometheus.png"
-            class="logo"
-            alt="Prometheus"
-          />
-          <img
-            src="https://img.icons8.com/color/100/000000/grafana.png"
-            class="logo"
-            alt="Grafana"
-          />
-        </div>
-      </div>
+  <header class="bg-blue-900 text-white p-6 text-center shadow-lg">
+    <h1 class="text-3xl font-bold">🔧 SRE Tools & Technologies</h1>
+    <p class="mt-2 text-lg">Key tools used by modern Site Reliability Engineers</p>
+  </header>
 
-      <!-- Security -->
-      <div class="col">
-        <div class="card text-center p-4">
-          <div class="section-title">Security</div>
-          <img
-            src="https://img.icons8.com/color/100/000000/trivy.png"
-            class="logo"
-            alt="Trivy"
-          />
-          <img
-            src="https://img.icons8.com/color/100/000000/snyk.png"
-            class="logo"
-            alt="Snyk"
-          />
-        </div>
-      </div>
+  <main class="max-w-6xl mx-auto p-6 space-y-10">
 
-      <!-- Logging -->
-      <div class="col">
-        <div class="card text-center p-4">
-          <div class="section-title">Logging</div>
-          <img
-            src="https://img.icons8.com/color/100/000000/elk-stack.png"
-            class="logo"
-            alt="ELK Stack"
-          />
-          <img
-            src="https://img.icons8.com/color/100/000000/loki.png"
-            class="logo"
-            alt="Loki"
-          />
+    <!-- CI/CD -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">🚀 CI/CD</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://www.jenkins.io/images/logos/jenkins/jenkins.png" class="h-16 mx-auto mb-2" alt="Jenkins">
+          <p>Jenkins</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="h-16 mx-auto mb-2" alt="GitHub Actions">
+          <p>GitHub Actions</p>
         </div>
       </div>
+    </section>
 
-      <!-- Infra as Code -->
-      <div class="col">
-        <div class="card text-center p-4">
-          <div class="section-title">Infra as Code</div>
-          <img
-            src="https://img.icons8.com/color/100/000000/terraform.png"
-            class="logo"
-            alt="Terraform"
-          />
-          <img
-            src="https://img.icons8.com/color/100/000000/ansible.png"
-            class="logo"
-            alt="Ansible"
-          />
+    <!-- Monitoring -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">📊 Monitoring</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://prometheus.io/assets/prometheus_logo_grey.svg" class="h-16 mx-auto mb-2" alt="Prometheus">
+          <p>Prometheus</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://grafana.com/static/img/menu/grafana2.svg" class="h-16 mx-auto mb-2" alt="Grafana">
+          <p>Grafana</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://raw.githubusercontent.com/google/cadvisor/master/docs/images/cadvisor-logo.png" class="h-16 mx-auto mb-2" alt="cAdvisor">
+          <p>cAdvisor</p>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
+
+    <!-- Security -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">🔐 Security</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://raw.githubusercontent.com/aquasecurity/trivy/main/docs/static/images/logo.svg" class="h-16 mx-auto mb-2" alt="Trivy">
+          <p>Trivy</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://snyk.io/wp-content/uploads/logo-2.svg" class="h-16 mx-auto mb-2" alt="Snyk">
+          <p>Snyk</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logging -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">🪵 Logging</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Elastic_Logo.svg/512px-Elastic_Logo.svg.png" class="h-16 mx-auto mb-2" alt="ELK">
+          <p>ELK Stack</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://grafana.com/static/img/logos/loki-icon.svg" class="h-16 mx-auto mb-2" alt="Loki">
+          <p>Loki</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Infra as Code -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">⚙️ Infrastructure as Code</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://www.terraform.io/assets/images/og-image-8b3e4f7d.png" class="h-16 mx-auto mb-2" alt="Terraform">
+          <p>Terraform</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Ansible_logo.svg" class="h-16 mx-auto mb-2" alt="Ansible">
+          <p>Ansible</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center p-4 bg-gray-200 mt-10">
+    Built with ❤️ for SREs
+  </footer>
 </body>
 </html>
-
