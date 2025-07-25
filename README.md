@@ -199,7 +199,7 @@ pipeline {
     }
     environment {
         SONAR_HOME = tool "Sonar"
-        DOCKER_IMAGE = "sachinviru/sre-website"
+        DOCKER_IMAGE = "sre-website"
         IMAGE_TAG = "latest"
     }
 
