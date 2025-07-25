@@ -47,7 +47,7 @@ pipeline{
         }
         stage("Trivy Security Scan"){
             steps{
-                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL ${DOCKER_IMAGE}:${IMAGE_TAG} > trivy-scan.txt'
+               docker run --rm -v $(pwd):/src aquasec/trivy fs --format table -o /src/trivy-fs-report.txt /src
             }
         }
         stage("Docker login and Push"){
