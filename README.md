@@ -47,31 +47,31 @@ sudo systemctl restart jenkins
 
 ---
 
-## 📦 Install Maven and OWASP in Jenkins
-
-1. **Install Maven:**
-
-   - Manage Jenkins → Global Tool Configuration → Maven → Add Maven (`Name: Maven3`)
-   - Install automatically or configure manually
-
-2. **Install OWASP Dependency Check Plugin:**
-
-   - Manage Jenkins → Manage Plugins → Available → Search `OWASP Dependency-Check Plugin`
-   - Install and restart Jenkins
-
----
-
 ## 📦 Required Jenkins Plugins
 
 Install the following plugins:
 
-- Pipeline (workflow-aggregator)
-- Docker Pipeline
-- SonarQube Scanner
-- OWASP Dependency-Check
-- Trivy Plugin (optional)
-- Maven Integration
-- Credentials Binding Plugin
+* Pipeline (workflow-aggregator)
+* Docker Pipeline
+* SonarQube Scanner
+* OWASP Dependency-Check
+* Trivy Plugin (optional)
+* Maven Integration
+* Credentials Binding Plugin
+
+---
+
+## 📦 Install Maven and OWASP in Jenkins
+
+1. **Install Maven:**
+
+   * Manage Jenkins → Global Tool Configuration → Maven → Add Maven (`Name: Maven3`)
+   * Install automatically or configure manually
+
+2. **Install OWASP Dependency Check Plugin:**
+
+   * Manage Jenkins → Manage Plugins → Available → Search `OWASP Dependency-Check Plugin`
+   * Install and restart Jenkins
 
 ---
 
@@ -163,6 +163,31 @@ scrape_configs:
 ```
 
 ---
+
+## 🧪 CI/CD Pipeline Steps Overview
+The pipeline performs the following stages:
+```
+✅ Checkout code from GitHub
+
+✅ SonarQube Code Scan to analyze code quality
+
+✅ OWASP Dependency Check for known vulnerabilities
+
+✅ Wait for Sonar Quality Gate (optional addition if configured)
+
+✅ Build JAR using Maven
+
+✅ Build Docker Image
+
+✅ Trivy Image Scan (only container image, not file system)
+
+✅ Push to Docker Hub (only if configured)
+
+✅ Run Container Locally (for testing on Docker network)
+
+✅ Monitor using Prometheus + Grafana (optional setup)
+
+```
 
 ## 🚀 Jenkins CI/CD Pipeline (Groovy Script)
 
