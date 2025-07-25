@@ -218,7 +218,8 @@ pipeline {
             steps {
                 withSonarQubeEnv("Sonar") {
                     sh '''
-                    mvn sonar:sonar                     -Dsonar.projectKey=sre-website                     -Dsonar.projectName=sre-website                     -Dsonar.java.binaries=target/classes                     -Dsonar.sources=src/main/java
+                    mvn sonar:sonar -Dsonar.projectKey=sre-website -Dsonar.projectName=sre-website Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java
+                    $SONAR_HOME/bin/sonar-scanner -Dsonar.projectName=sre-website -Dsonar.projectKey=sre-website -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java                                
                     '''
                 }
             }
