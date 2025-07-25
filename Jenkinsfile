@@ -48,7 +48,7 @@ pipeline{
         stage("Trivy Security Scan"){
             steps{
                sh '''
-                docker run --rm -v $(pwd):/src aquasec/trivy fs --format table -o /src/trivy-fs-report.txt /src
+                docker run --rm aquasec/trivy --server http://host.docker.internal:4954 image ${DOCKER_IMAGE}:${IMAGE_TAG} --format table -o trivy-image-report.txt
                 '''
             }
         }
