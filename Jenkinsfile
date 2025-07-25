@@ -47,9 +47,7 @@ pipeline{
         }
         stage("Trivy Security Scan"){
             steps{
-               sh '''
-                docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.docker:/root/.docker aquasec/trivy --server http://127.0.0.1:4954 image ${DOCKER_IMAGE}:${IMAGE_TAG} --format table -o trivy-image-report.txt
-                '''
+                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy --server http://host.docker.internal:4954 image ${DOCKER_IMAGE}:${IMAGE_TAG} --format table -o trivy-image-report.txt'
             }
         }
         stage("Docker login and Push"){
