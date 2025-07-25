@@ -47,7 +47,9 @@ pipeline{
         }
         stage("Trivy Security Scan"){
             steps{
-               docker run --rm -v $(pwd):/src aquasec/trivy fs --format table -o /src/trivy-fs-report.txt /src
+               sh '''
+                docker run --rm -v $(pwd):/src aquasec/trivy fs --format table -o /src/trivy-fs-report.txt /src
+                '''
             }
         }
         stage("Docker login and Push"){
