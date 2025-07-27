@@ -1,6 +1,9 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
+
 WORKDIR /app
-COPY target/sre-website-0.0.1-SNAPSHOT.jar app.jar
+COPY target/*.jar app.jar
+
 EXPOSE 2020
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+CMD ["java", "-XX:+IgnoreUnrecognizedVMOptions", "-XX:+UseContainerSupport", "-Dmanagement.metrics.enable.processor=false", "-jar", "app.jar"]
 
