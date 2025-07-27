@@ -62,6 +62,11 @@ pipeline{
                 sh 'docker rm -f sre_website || true && docker run -d --name sre_website -p 2020:2020 --network monitoring ${DOCKER_IMAGE}:${IMAGE_TAG}'
             }
         }
+        stage("Debug Docker container logs of sre-website"){
+            steps{
+                sh 'sleep 5 && docker logs sre-website || true'
+            }
+        }
     }
     post{
         always{
